@@ -1,0 +1,135 @@
+--- REGISTER
+POST /auth/register
+BODY
+  username
+  password
+  confirmPassword
+  email
+RESPONSE
+  201 message
+  400 message
+  500 message
+
+--- LOGIN
+POST /auth/login
+BODY
+  username
+  password
+RESPONSE
+  200 accessToken
+  400 message
+  500 message
+
+--- EDIT PROFILE
+PATCH /auth/profile
+HEADER
+  Authorization Bearer access_token
+BODY
+  email
+  password
+  confirmPassword
+  currentPassword
+RESPONSE
+  201 message
+  400 message
+  500 message
+
+--- GET AUTHENTICATED USER, USERINFO
+GET /auth/me
+HEADER
+  Authorization Bearer access_token
+RESPONSE
+  200 user
+  401 message
+  500 message
+
+--- GET USERINFO
+GET /auth/userinfo
+HEADER
+  Authorization Bearer access_token
+RESPONSE
+  200 userinfo
+  401 message
+  500 message
+
+--- WISH
+POST /WISH
+HEADER
+  Authorization Bearer access_token
+BODY
+  bannerId
+  amount
+RESPONSE
+  201 roll
+  400 message
+  401 message
+  500 message
+
+--- GET BANNER
+GET /page/banner
+RESPONSE
+  200 bannerdata
+  500 message
+
+--- GET CHARTCOURSE DATA
+GET /page/chartcourse/:bannerId
+RESPONSE
+  200 weapondata
+  400 message
+  500 message
+
+--- SET CHARTCOURSE
+POST /page/selectcourse
+BODY
+  userId
+  bannerItemId
+RESPONSE
+  200 success
+  400 message
+  500 message
+
+--- GET HISTORY
+GET /page/history
+HEADER
+  Authorization Bearer access_token
+RESPONSE
+  200 details
+  401 message
+  500 message
+
+--- DELETE HISTORY
+DELETE /page/history
+HEADER
+  Authorization Bearer access_token
+RESPONSE
+  200 success
+  401 message
+  500 message
+
+--- BUY GEM
+POST /buy/gem
+HEADER
+  Authorization Bearer access_token
+BODY
+  amount
+  price
+  bonus
+RESPONSE
+  200 success
+  400 message
+  401 message
+  500 message
+
+--- BUY FATE
+POST /buy/fate
+HEADER
+  Authorization Bearer access_token
+BODY
+  type
+  amount
+  currency
+RESPONSE
+  200 success
+  400 message
+  401 message
+  500 message

@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  username  String  @db.VarChar(50) @unique
+  password  String  @db.VarChar(256)
+  email     String  @db.VarChar(50) @unique
+  userInfo  UserInfo?
+  roll      Roll[]
+
+  @@map("users")
+}
+
+model UserInfo {
+  id                  Int     @id @default(autoincrement())
+  userId              Int     @unique @map("user_id")
+  user                User    @relation(fields: [userId], references: [id])
+  gem                 Int     @default(0)
+  acquaintFate        Int     @default(0) @map("acquaint_fate")
+  intertwinedFate     Int     @default(0) @map("intertwined_fate")
+  starglitter         Int     @default(0)
+  stardust            Int     @default(0)
+  charPity            Int     @db.UnsignedTinyInt @default(0) @map("char_pity")
+  charSRPity          Int     @db.UnsignedTinyInt @default(0) @map("char_SR_pity")
+  charSRGuarantee     Boolean @default(false) @map("char_SR_guarantee")
+  charSSRGuarantee    Boolean @default(false) @map("char_SSR_guarantee")
+  weaponPity          Int     @db.UnsignedTinyInt @default(0) @map("weapon_pity")
+  weaponSRPity        Int     @db.UnsignedTinyInt @default(0) @map("weapon_SR_pity")
+  weaponSRGuarantee   Boolean @default(false) @map("weapon_SR_guarantee")
+  weaponSSRGuarantee  Boolean @default(false) @map("weapon_SSR_guarantee")
+  selectedWeaponId    Int?    @map("selected_weapon_id")
+  weapon              Weapon? @relation(fields: [selectedWeaponId], references: [id])
+  weaponChartCourse   Int     @db.UnsignedTinyInt @default(0) @map("weapon_chartcourse")
+  standardPity        Int     @db.UnsignedTinyInt @default(0) @map("standard_pity")
+  standardSRPity      Int     @db.UnsignedTinyInt @default(0) @map("standard_SR_pity")
+  spentCash           Int     @default(0) @map("spent_cash")
+  spentPrimogem       Int     @default(0) @map("spent_primogem")
+  
+  @@map("user_infos")
+}
+
+model Roll {
+  id            Int         @id @default(autoincrement())
+  userId        Int         @map("user_id")
+  user          User        @relation(fields: [userId], references: [id])
+  bannerItemId  Int         @map("banner_item_id")
+  bannerItem    BannerItem  @relation(fields: [bannerItemId], references: [id])
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+
+  @@map("rolls")
+}
+
+model BannerItem {
+  id        Int         @id @default(autoincrement())
+  bannerId  Int         @map("banner_id")
+  banner    Banner      @relation(fields: [bannerId], references: [id])
+  charId    Int?        @map("char_id")
+  character Character?  @relation(fields: [charId], references: [id])
+  weaponId  Int?        @map("weapon_id")
+  weapon    Weapon?     @relation(fields: [weaponId], references: [id])
+  rateUp    Boolean     @default(false) @map("rate_up")
+
+  roll  Roll[]
+  @@map("banner_items")
+}
+
+enum BannerType {
+  STANDARD
+  CHARACTER
+  WEAPON
+}
+
+model Banner {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(100)
+  img         String?     @db.VarChar(256)
+  type        BannerType
+  releaseDate DateTime?   @db.Date @map("release_date")
+  version     String
+  bannerItem  BannerItem[]
+
+  @@map("banners")
+}
+
+enum Rarity {
+  R
+  SR
+  SSR
+}
+
+model Character {
+  id                Int         @id @default(autoincrement())
+  name              String      @db.VarChar(100) @unique
+  fullImg           String?     @db.VarChar(256) @map("full_img")
+  iconImg           String?     @db.VarChar(256) @map("icon_img")
+  limited           Boolean     @default(false)
+  standardLocked    Boolean     @default(false) @map("standard_locked")
+  rarity            Rarity
+  bannerItem        BannerItem[]
+
+  @@map("characters")
+}
+
+model Weapon {
+  id                Int         @id @default(autoincrement())
+  name              String      @db.VarChar(100) @unique
+  fullImg           String?     @db.VarChar(256) @map("full_img")
+  iconImg           String?     @db.VarChar(256) @map("icon_img")
+  limited           Boolean     @default(false)
+  rarity            Rarity
+  bannerItem        BannerItem[]
+  userinfo          UserInfo[]
+
+  @@map("weapons")
+}
