@@ -12,7 +12,6 @@ pageController.getBanner = async (req, res, next) => {
     bannerData.map(
       (e) => (e.img = `${req.protocol}://${req.get("host")}${e.img}`)
     );
-    console.log(bannerData);
     res.status(200).json(bannerData);
   } catch (err) {
     next(err);
@@ -33,6 +32,16 @@ pageController.getChartCourse = async (req, res, next) => {
     const chartCourseData = await bannerService.getWeaponChartCourse(
       +req.params.bannerId
     );
+
+    chartCourseData.map((item) => {
+      item.weapon.fullImg = `${req.protocol}://${req.get("host")}${
+        item.weapon.fullImg
+      }`;
+      item.weapon.iconImg = `${req.protocol}://${req.get("host")}${
+        item.weapon.iconImg
+      }`;
+      return item;
+    });
 
     res.status(200).json(chartCourseData);
   } catch (err) {
@@ -70,6 +79,48 @@ pageController.setCourse = async (req, res, next) => {
 pageController.getRollHistory = async (req, res, next) => {
   try {
     const rollHistory = await rollService.getRollById(req.user.id);
+
+    rollHistory.map((item) => {
+      if (item.bannerItem.character) {
+        if (
+          item.bannerItem.character.fullImg &&
+          !item.bannerItem.character.fullImg.startsWith("http")
+        ) {
+          item.bannerItem.character.fullImg = `${req.protocol}://${req.get(
+            "host"
+          )}${item.bannerItem.character.fullImg}`;
+        }
+        if (
+          item.bannerItem.character.iconImg &&
+          !item.bannerItem.character.iconImg.startsWith("http")
+        ) {
+          item.bannerItem.character.iconImg = `${req.protocol}://${req.get(
+            "host"
+          )}${item.bannerItem.character.iconImg}`;
+        }
+      }
+      if (item.bannerItem.weapon) {
+        if (
+          item.bannerItem.weapon.fullImg &&
+          !item.bannerItem.weapon.fullImg.startsWith("http")
+        ) {
+          item.bannerItem.weapon.fullImg = `${req.protocol}://${req.get(
+            "host"
+          )}${item.bannerItem.weapon.fullImg}`;
+        }
+        if (
+          item.bannerItem.weapon.iconImg &&
+          !item.bannerItem.weapon.iconImg.startsWith("http")
+        ) {
+          item.bannerItem.weapon.iconImg = `${req.protocol}://${req.get(
+            "host"
+          )}${item.bannerItem.weapon.iconImg}`;
+        }
+      }
+
+      return item;
+    });
+
     res.status(200).json({ rollHistory });
   } catch (err) {
     next(err);

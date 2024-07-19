@@ -312,6 +312,39 @@ wishController.wishing = async (req, res, next) => {
       rollResult.push(rollUnit);
     }
 
+    rollResult.map((item) => {
+      if (item.character) {
+        if (
+          item.character.fullImg &&
+          !item.character.fullImg.startsWith("http")
+        ) {
+          item.character.fullImg = `${req.protocol}://${req.get("host")}${
+            item.character.fullImg
+          }`;
+        }
+        if (
+          item.character.iconImg &&
+          !item.character.iconImg.startsWith("http")
+        ) {
+          item.character.iconImg = `${req.protocol}://${req.get("host")}${
+            item.character.iconImg
+          }`;
+        }
+      }
+      if (item.weapon) {
+        if (item.weapon.fullImg && !item.weapon.fullImg.startsWith("http")) {
+          item.weapon.fullImg = `${req.protocol}://${req.get("host")}${
+            item.weapon.fullImg
+          }`;
+        }
+        if (item.weapon.iconImg && !item.weapon.iconImg.startsWith("http")) {
+          item.weapon.iconImg = `${req.protocol}://${req.get("host")}${
+            item.weapon.iconImg
+          }`;
+        }
+      }
+      return item;
+    });
     res.status(201).json({ rollResult });
   } catch (err) {
     next(err);
