@@ -9,6 +9,10 @@ const pageController = {};
 pageController.getBanner = async (req, res, next) => {
   try {
     const bannerData = await bannerService.getBannerInfo();
+    bannerData.map(
+      (e) => (e.img = `${req.protocol}://${req.get("host")}${e.img}`)
+    );
+    console.log(bannerData);
     res.status(200).json(bannerData);
   } catch (err) {
     next(err);
